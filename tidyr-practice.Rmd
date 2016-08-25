@@ -1,0 +1,216 @@
+---
+title: "tidyr practice"
+author: "Mark Pratley"
+date: "25 August 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## tidyr Practice
+
+A brief foray into practicing and trying to remember the main verbs from [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html)
+
+Text taken from [here](https://blog.rstudio.org/2014/07/22/introducing-tidyr/)
+
+Some data to practice on taken from [here](http://garrettgman.github.io/tidying/) or [here](http://www.jvcasillas.com/tidyr_tutorial/)
+
+
+```{r libs, warning=F, message=F}
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(DSR)
+```
+
+## Intro
+
+tidyr is new package that makes it easy to “tidy” your data. Tidy data is data that’s easy to work with: it’s easy to munge (with dplyr), visualise (with ggplot2 or ggvis) and model (with R’s hundreds of modelling packages). The two most important properties of tidy data are:
+
+- Each column is a variable.
+- Each row is an observation.
+
+Arranging your data in this way makes it easier to work with because you have a consistent way of referring to variables (as column names) and observations (as row indices). When use tidy data and tidy tools, you spend less time worrying about how to feed the output from one function into the input of another, and more time answering your questions about the data.
+
+To tidy messy data, you first identify the variables in your dataset, then use the tools provided by tidyr to move them into columns. tidyr provides three main functions for tidying your messy data: gather(), separate() and spread().
+
+## Gather 1
+
+gather() takes multiple columns, and gathers them into key-value pairs: it makes “wide” data longer. Other names for gather include melt (reshape2), pivot (spreadsheets) and fold (databases). 
+
+
+```{r gather1-1}
+table4 %>% 
+    print()
+```
+
+Convert table4 to tidy format
+
+```{r gather1-2}
+table4 %>% 
+    gather(Year, Cases, 2:3) %>% 
+    print()
+```
+
+## Gather 2
+
+```{r gather2-1}
+
+tidyr.ex <- data.frame(
+    participant = c("p1", "p2", "p3", "p4", "p5", "p6"), 
+    info        = c("g1m", "g1m", "g1f", "g2m", "g2m", "g2m"),
+    day1score   = rnorm(n = 6, mean = 80, sd = 15), 
+    day2score   = rnorm(n = 6, mean = 88, sd = 8)
+)
+
+tidyr.ex %>% 
+    print()
+```
+
+Convert tidyr.ex to tidy format
+
+```{r gather2-2}
+tidyr.ex %>% 
+    gather(Day, Score, c(day1score, day2score)) %>% 
+    mutate(Day=str_extract(Day, "\\d")) %>% 
+    print()
+```
+
+# Gather 3
+
+Using airquality dataset
+
+```{r gather3-1}
+airquality %>% 
+    head() %>% 
+    print()
+```
+
+Convert airquality to tidy format, show first 3 values for each key
+
+```{r gather3-2}
+airquality %>% 
+    gather(key, value, -Month, -Day) %>% 
+    group_by(key) %>% 
+    slice(1:3) %>% 
+    print()
+```
+
+# gather #4
+
+```{r gather4-1}
+messy <- data.frame(
+  id = 1:4,
+  trt = sample(rep(c('control', 'treatment'), each = 2)),
+  work.T1 = runif(4),
+  home.T1 = runif(4),
+  work.T2 = runif(4),
+  home.T2 = runif(4)
+)
+messy %>% 
+    print()
+```
+
+```{r gather4-2}
+tidier <- 
+    messy %>% 
+    gather(key, value, -id, -trt)
+
+tidier %>% 
+    head(5)
+```
+
+# Separate
+
+Sometimes two variables are clumped together in one column. separate() allows you to tease them apart (extract() works similarly but uses regexp groups instead of a splitting pattern or position).
+
+# Separate #1
+
+table2
+
+```{r separate1-1}
+table3 %>% 
+    print()
+```
+
+
+```{r separate1-2}
+table3 %>% 
+    separate(rate, c("thingy1", "thingy2"), sep="/")
+```
+
+# Separate #2
+
+Using tidier from above
+
+```{r separate2-1}
+tidier %>% 
+    head(5)
+```
+
+
+```{r separate2-2}
+tidy <- 
+    tidier %>% 
+    separate(key, into = c("loc", "time"), sep="\\.")
+
+tidy %>% 
+    head()
+```
+
+
+# Separate #3
+
+```{r separate3-1}
+
+```
+
+
+```{r separate3-2}
+
+```
+
+
+# Spread
+
+spread(), takes two columns (a key-value pair) and spreads them in to multiple columns, making “long” data wider. Spread is known by other names in other places: it’s cast in reshape2, unpivot in spreadsheets and unfold in databases. spread() is used when you have variables that form rows instead of columns. You need spread() less frequently than gather() or separate()
+
+# Spead #1
+
+table2
+
+```{r spread1-1}
+table2 %>% 
+    print()
+```
+
+
+```{r spread1-2}
+table2 %>% 
+    spread(key, value)
+```
+
+# Spead #2
+
+```{r spread2-1}
+
+```
+
+
+```{r spread2-2}
+
+```
+
+
+# Spead #3
+
+```{r spread3-1}
+
+```
+
+
+```{r spread3-2}
+
+```
