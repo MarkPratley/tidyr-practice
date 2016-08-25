@@ -76,6 +76,7 @@ img {
 <pre class="r"><code>library(tidyr)
 library(dplyr)
 library(stringr)
+library(reshape)
 library(DSR)</code></pre>
 </div>
 <div id="intro" class="section level2">
@@ -125,30 +126,30 @@ library(DSR)</code></pre>
 tidyr.ex %&gt;% 
     print()</code></pre>
 <pre><code>##   participant info day1score day2score
-## 1          p1  g1m  85.04821  82.44456
-## 2          p2  g1m  79.18244  83.29450
-## 3          p3  g1f  66.60902  95.08990
-## 4          p4  g2m  92.65059  93.82072
-## 5          p5  g2m  40.84916  90.85020
-## 6          p6  g2m  95.09600  83.95411</code></pre>
+## 1          p1  g1m  51.18707  99.20964
+## 2          p2  g1m 115.44695  86.03125
+## 3          p3  g1f  58.02444  88.23006
+## 4          p4  g2m  65.54659  94.52487
+## 5          p5  g2m  67.04197  73.08579
+## 6          p6  g2m  48.51659  90.99622</code></pre>
 <p>Convert tidyr.ex to tidy format</p>
 <pre class="r"><code>tidyr.ex %&gt;% 
     gather(Day, Score, c(day1score, day2score)) %&gt;% 
     mutate(Day=str_extract(Day, &quot;\\d&quot;)) %&gt;% 
     print()</code></pre>
-<pre><code>##    participant info Day    Score
-## 1           p1  g1m   1 85.04821
-## 2           p2  g1m   1 79.18244
-## 3           p3  g1f   1 66.60902
-## 4           p4  g2m   1 92.65059
-## 5           p5  g2m   1 40.84916
-## 6           p6  g2m   1 95.09600
-## 7           p1  g1m   2 82.44456
-## 8           p2  g1m   2 83.29450
-## 9           p3  g1f   2 95.08990
-## 10          p4  g2m   2 93.82072
-## 11          p5  g2m   2 90.85020
-## 12          p6  g2m   2 83.95411</code></pre>
+<pre><code>##    participant info Day     Score
+## 1           p1  g1m   1  51.18707
+## 2           p2  g1m   1 115.44695
+## 3           p3  g1f   1  58.02444
+## 4           p4  g2m   1  65.54659
+## 5           p5  g2m   1  67.04197
+## 6           p6  g2m   1  48.51659
+## 7           p1  g1m   2  99.20964
+## 8           p2  g1m   2  86.03125
+## 9           p3  g1f   2  88.23006
+## 10          p4  g2m   2  94.52487
+## 11          p5  g2m   2  73.08579
+## 12          p6  g2m   2  90.99622</code></pre>
 </div>
 <div id="gather-3" class="section level1">
 <h1>Gather 3</h1>
@@ -164,8 +165,11 @@ tidyr.ex %&gt;%
 ## 5    NA      NA 14.3   56     5   5
 ## 6    28      NA 14.9   66     5   6</code></pre>
 <p>Convert airquality to tidy format, show first 3 values for each key</p>
-<pre class="r"><code>airquality %&gt;% 
-    gather(key, value, -Month, -Day) %&gt;% 
+<pre class="r"><code>airquality.tidy &lt;- 
+    airquality %&gt;% 
+    gather(key, value, -Month, -Day)
+
+airquality.tidy %&gt;% 
     group_by(key) %&gt;% 
     slice(1:3) %&gt;% 
     print()</code></pre>
@@ -199,11 +203,11 @@ tidyr.ex %&gt;%
 )
 messy %&gt;% 
     print()</code></pre>
-<pre><code>##   id       trt   work.T1    home.T1    work.T2   home.T2
-## 1  1   control 0.6029435 0.41170117 0.11179452 0.5656821
-## 2  2 treatment 0.2582924 0.51718220 0.05983765 0.4232384
-## 3  3 treatment 0.9643595 0.03792374 0.33097894 0.3558819
-## 4  4   control 0.9862599 0.43422114 0.93391923 0.3732867</code></pre>
+<pre><code>##   id       trt   work.T1   home.T1    work.T2   home.T2
+## 1  1 treatment 0.7005514 0.1932776 0.97316612 0.8405872
+## 2  2 treatment 0.5800682 0.4516330 0.47939540 0.6838744
+## 3  3   control 0.2486630 0.9189001 0.81983219 0.1093675
+## 4  4   control 0.9492435 0.8845439 0.05020443 0.9422388</code></pre>
 <pre class="r"><code>tidier &lt;- 
     messy %&gt;% 
     gather(key, value, -id, -trt)
@@ -211,11 +215,43 @@ messy %&gt;%
 tidier %&gt;% 
     head(5)</code></pre>
 <pre><code>##   id       trt     key     value
-## 1  1   control work.T1 0.6029435
-## 2  2 treatment work.T1 0.2582924
-## 3  3 treatment work.T1 0.9643595
-## 4  4   control work.T1 0.9862599
-## 5  1   control home.T1 0.4117012</code></pre>
+## 1  1 treatment work.T1 0.7005514
+## 2  2 treatment work.T1 0.5800682
+## 3  3   control work.T1 0.2486630
+## 4  4   control work.T1 0.9492435
+## 5  1 treatment home.T1 0.1932776</code></pre>
+</div>
+<div id="gather-5" class="section level1">
+<h1>gather #5</h1>
+<p>french fries data treatment + subject ~ flavour</p>
+<pre class="r"><code>french_fries %&gt;% 
+    head()</code></pre>
+<pre><code>##    time treatment subject rep potato buttery grassy rancid painty
+## 61    1         1       3   1    2.9     0.0    0.0    0.0    5.5
+## 25    1         1       3   2   14.0     0.0    0.0    1.1    0.0
+## 62    1         1      10   1   11.0     6.4    0.0    0.0    0.0
+## 26    1         1      10   2    9.9     5.9    2.9    2.2    0.0
+## 63    1         1      15   1    1.2     0.1    0.0    1.1    5.1
+## 27    1         1      15   2    8.8     3.0    3.6    1.5    2.3</code></pre>
+<pre class="r"><code>ff.tidy &lt;- 
+    french_fries %&gt;% 
+    gather(flavour, value, -c(time:rep))
+
+ff.tidy %&gt;% 
+    group_by(treatment, subject, flavour) %&gt;%
+    summarise(value = mean(value)) %&gt;%
+    spread(flavour, value) %&gt;%
+    head(5)</code></pre>
+<pre><code>## Source: local data frame [5 x 7]
+## Groups: treatment, subject [5]
+## 
+##   treatment subject   buttery    grassy   painty   potato   rancid
+##      &lt;fctr&gt;  &lt;fctr&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1         1       3 0.3722222 0.1888889 3.111111 6.216667 2.105556
+## 2         1      10 6.7500000 0.5850000 1.375000 9.955000 4.020000
+## 3         1      15 0.7200000 0.4200000 3.260000 3.360000 3.965000
+## 4         1      16 3.2600000 0.7550000 1.230000 6.495000 4.120000
+## 5         1      19 3.0550000 2.0200000 2.775000 9.385000 5.360000</code></pre>
 </div>
 <div id="separate" class="section level1">
 <h1>Separate</h1>
@@ -253,11 +289,11 @@ tidier %&gt;%
 <pre class="r"><code>tidier %&gt;% 
     head(5)</code></pre>
 <pre><code>##   id       trt     key     value
-## 1  1   control work.T1 0.6029435
-## 2  2 treatment work.T1 0.2582924
-## 3  3 treatment work.T1 0.9643595
-## 4  4   control work.T1 0.9862599
-## 5  1   control home.T1 0.4117012</code></pre>
+## 1  1 treatment work.T1 0.7005514
+## 2  2 treatment work.T1 0.5800682
+## 3  3   control work.T1 0.2486630
+## 4  4   control work.T1 0.9492435
+## 5  1 treatment home.T1 0.1932776</code></pre>
 <pre class="r"><code>tidy &lt;- 
     tidier %&gt;% 
     separate(key, into = c(&quot;loc&quot;, &quot;time&quot;), sep=&quot;\\.&quot;)
@@ -265,22 +301,51 @@ tidier %&gt;%
 tidy %&gt;% 
     head()</code></pre>
 <pre><code>##   id       trt  loc time     value
-## 1  1   control work   T1 0.6029435
-## 2  2 treatment work   T1 0.2582924
-## 3  3 treatment work   T1 0.9643595
-## 4  4   control work   T1 0.9862599
-## 5  1   control home   T1 0.4117012
-## 6  2 treatment home   T1 0.5171822</code></pre>
+## 1  1 treatment work   T1 0.7005514
+## 2  2 treatment work   T1 0.5800682
+## 3  3   control work   T1 0.2486630
+## 4  4   control work   T1 0.9492435
+## 5  1 treatment home   T1 0.1932776
+## 6  2 treatment home   T1 0.4516330</code></pre>
 </div>
 <div id="separate-3" class="section level1">
 <h1>Separate #3</h1>
+<pre class="r"><code>astrag &lt;- read.table(&quot;http://hompal-stats.wabarr.com/datasets/barr_astrag_2014.txt&quot;, header=TRUE, sep=&quot;\t&quot;)
+
+astrag %&gt;% 
+    head()</code></pre>
+<pre><code>##   individual                 Taxon Habitat    ACF  APD     B DistRad DMTD
+## 1  AMNH81690    Aepyceros_melampus      LC 384.72 6.89 15.16    9.22 1.78
+## 2  AMNH82050    Aepyceros_melampus      LC     NA 6.09 14.00    8.73 1.64
+## 3  AMNH83534    Aepyceros_melampus      LC     NA 6.14 17.22    9.19 1.70
+## 4  AMNH85150    Aepyceros_melampus      LC     NA 5.80 15.27    8.85 1.72
+## 5 AMNH233038 Alcelaphus_buselaphus       O 607.83 7.46 18.47   11.33 2.26
+## 6  AMNH34717 Alcelaphus_buselaphus       O 465.91 6.56 15.47    9.79 1.78
+##   DTArea   LML   MIN   MML PMTD ProxRad  PTArea   WAF   WAT
+## 1 553.14 35.78 28.04 34.39 6.33   10.00  915.50 21.39 21.83
+## 2 558.17 35.46 27.28 33.18 6.54   10.50  841.79 22.47 21.11
+## 3 554.00 39.15 29.99 36.94 7.63   10.65  976.25 22.07 21.54
+## 4 498.67 36.61 28.02 34.09 6.97   10.00  841.71 22.55 21.03
+## 5 900.76 45.25 36.03 43.55 6.83   13.85 1557.05 28.98 27.07
+## 6 649.47 36.81 30.80 35.95 4.28   10.91 1139.50 24.04 25.84</code></pre>
+<pre class="r"><code>astrag %&gt;% 
+    select(individual, Taxon, Habitat) %&gt;% 
+    separate(Taxon, c(&quot;genus&quot;, &quot;species&quot;), sep=&quot;_&quot;) %&gt;% 
+    head()</code></pre>
+<pre><code>##   individual      genus    species Habitat
+## 1  AMNH81690  Aepyceros   melampus      LC
+## 2  AMNH82050  Aepyceros   melampus      LC
+## 3  AMNH83534  Aepyceros   melampus      LC
+## 4  AMNH85150  Aepyceros   melampus      LC
+## 5 AMNH233038 Alcelaphus buselaphus       O
+## 6  AMNH34717 Alcelaphus buselaphus       O</code></pre>
 </div>
 <div id="spread" class="section level1">
 <h1>Spread</h1>
 <p>spread(), takes two columns (a key-value pair) and spreads them in to multiple columns, making “long” data wider. Spread is known by other names in other places: it’s cast in reshape2, unpivot in spreadsheets and unfold in databases. spread() is used when you have variables that form rows instead of columns. You need spread() less frequently than gather() or separate()</p>
 </div>
-<div id="spead-1" class="section level1">
-<h1>Spead #1</h1>
+<div id="spread-1" class="section level1">
+<h1>Spread #1</h1>
 <p>table2</p>
 <pre class="r"><code>table2 %&gt;% 
     print()</code></pre>
@@ -311,11 +376,51 @@ tidy %&gt;%
 ## 5       China  1999 212258 1272915272
 ## 6       China  2000 213766 1280428583</code></pre>
 </div>
-<div id="spead-2" class="section level1">
-<h1>Spead #2</h1>
+<div id="spread-2" class="section level1">
+<h1>Spread #2</h1>
+<p>From french fries above</p>
+<pre class="r"><code>ff.tidy %&gt;% 
+    head()</code></pre>
+<pre><code>##   time treatment subject rep flavour value
+## 1    1         1       3   1  potato   2.9
+## 2    1         1       3   2  potato  14.0
+## 3    1         1      10   1  potato  11.0
+## 4    1         1      10   2  potato   9.9
+## 5    1         1      15   1  potato   1.2
+## 6    1         1      15   2  potato   8.8</code></pre>
+<pre class="r"><code>ff.tidy %&gt;% 
+    spread(flavour, value) %&gt;% 
+    head()</code></pre>
+<pre><code>##   time treatment subject rep buttery grassy painty potato rancid
+## 1    1         1       3   1     0.0    0.0    5.5    2.9    0.0
+## 2    1         1       3   2     0.0    0.0    0.0   14.0    1.1
+## 3    1         1      10   1     6.4    0.0    0.0   11.0    0.0
+## 4    1         1      10   2     5.9    2.9    0.0    9.9    2.2
+## 5    1         1      15   1     0.1    0.0    5.1    1.2    1.1
+## 6    1         1      15   2     3.0    3.6    2.3    8.8    1.5</code></pre>
 </div>
-<div id="spead-3" class="section level1">
-<h1>Spead #3</h1>
+<div id="spread-3" class="section level1">
+<h1>Spread #3</h1>
+<p>Using airquality.tidy from above</p>
+<pre class="r"><code>airquality.tidy %&gt;% 
+    head()</code></pre>
+<pre><code>##   Month Day   key value
+## 1     5   1 Ozone    41
+## 2     5   2 Ozone    36
+## 3     5   3 Ozone    12
+## 4     5   4 Ozone    18
+## 5     5   5 Ozone    NA
+## 6     5   6 Ozone    28</code></pre>
+<pre class="r"><code>airquality.tidy %&gt;% 
+    spread(key, value) %&gt;% 
+    head()</code></pre>
+<pre><code>##   Month Day Ozone Solar.R Temp Wind
+## 1     5   1    41     190   67  7.4
+## 2     5   2    36     118   72  8.0
+## 3     5   3    12     149   74 12.6
+## 4     5   4    18     313   62 11.5
+## 5     5   5    NA      NA   56 14.3
+## 6     5   6    28      NA   66 14.9</code></pre>
 </div>
 
 

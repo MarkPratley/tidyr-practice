@@ -22,6 +22,7 @@ Some data to practice on taken from [here](http://garrettgman.github.io/tidying/
 library(tidyr)
 library(dplyr)
 library(stringr)
+library(reshape)
 library(DSR)
 ```
 
@@ -91,8 +92,11 @@ airquality %>%
 Convert airquality to tidy format, show first 3 values for each key
 
 ```{r gather3-2}
-airquality %>% 
-    gather(key, value, -Month, -Day) %>% 
+airquality.tidy <- 
+    airquality %>% 
+    gather(key, value, -Month, -Day)
+
+airquality.tidy %>% 
     group_by(key) %>% 
     slice(1:3) %>% 
     print()
@@ -119,6 +123,28 @@ tidier <-
     gather(key, value, -id, -trt)
 
 tidier %>% 
+    head(5)
+```
+
+# gather #5
+
+french fries data
+treatment + subject ~ flavour
+
+```{r gather5-1}
+french_fries %>% 
+    head()
+```
+
+```{r gather5-2}
+ff.tidy <- 
+    french_fries %>% 
+    gather(flavour, value, -c(time:rep))
+
+ff.tidy %>% 
+    group_by(treatment, subject, flavour) %>%
+    summarise(value = mean(value)) %>%
+    spread(flavour, value) %>%
     head(5)
 ```
 
@@ -163,13 +189,20 @@ tidy %>%
 
 # Separate #3
 
-```{r separate3-1}
 
+```{r separate3-1}
+astrag <- read.table("http://hompal-stats.wabarr.com/datasets/barr_astrag_2014.txt", header=TRUE, sep="\t")
+
+astrag %>% 
+    head()
 ```
 
 
 ```{r separate3-2}
-
+astrag %>% 
+    select(individual, Taxon, Habitat) %>% 
+    separate(Taxon, c("genus", "species"), sep="_") %>% 
+    head()
 ```
 
 
@@ -177,7 +210,7 @@ tidy %>%
 
 spread(), takes two columns (a key-value pair) and spreads them in to multiple columns, making “long” data wider. Spread is known by other names in other places: it’s cast in reshape2, unpivot in spreadsheets and unfold in databases. spread() is used when you have variables that form rows instead of columns. You need spread() less frequently than gather() or separate()
 
-# Spead #1
+# Spread #1
 
 table2
 
@@ -192,25 +225,35 @@ table2 %>%
     spread(key, value)
 ```
 
-# Spead #2
+# Spread #2
+
+From french fries above
 
 ```{r spread2-1}
-
+ff.tidy %>% 
+    head()
 ```
 
 
 ```{r spread2-2}
-
+ff.tidy %>% 
+    spread(flavour, value) %>% 
+    head()
 ```
 
 
-# Spead #3
+# Spread #3
+
+Using airquality.tidy from above
 
 ```{r spread3-1}
-
+airquality.tidy %>% 
+    head()
 ```
 
 
 ```{r spread3-2}
-
+airquality.tidy %>% 
+    spread(key, value) %>% 
+    head()
 ```
