@@ -34,7 +34,7 @@ library(reshape)
 library(DSR)
 ```
 
-## Intro
+## tidyr
 
 tidyr is new package that makes it easy to “tidy” your data. Tidy data is data that’s easy to work with: it’s easy to munge (with dplyr), visualise (with ggplot2 or ggvis) and model (with R’s hundreds of modelling packages). The two most important properties of tidy data are:
 

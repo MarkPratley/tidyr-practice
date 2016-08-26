@@ -85,8 +85,8 @@ library(stringr)
 library(reshape)
 library(DSR)</code></pre>
 </div>
-<div id="intro-1" class="section level2">
-<h2>Intro</h2>
+<div id="tidyr" class="section level2">
+<h2>tidyr</h2>
 <p>tidyr is new package that makes it easy to “tidy” your data. Tidy data is data that’s easy to work with: it’s easy to munge (with dplyr), visualise (with ggplot2 or ggvis) and model (with R’s hundreds of modelling packages). The two most important properties of tidy data are:</p>
 <ul>
 <li>Each column is a variable.</li>
@@ -143,30 +143,30 @@ library(DSR)</code></pre>
 tidyr.ex %&gt;% 
     print()</code></pre>
 <pre><code>##   participant info day1score day2score
-## 1          p1  g1m  80.08484  88.74511
-## 2          p2  g1m  52.49003  86.00410
-## 3          p3  g1f  76.66826  88.17017
-## 4          p4  g2m  62.89208  95.22918
-## 5          p5  g2m  78.34081  93.43769
-## 6          p6  g2m  71.98431  89.21983</code></pre>
+## 1          p1  g1m 107.51567  91.42354
+## 2          p2  g1m  71.85924  74.37154
+## 3          p3  g1f  91.64957  94.06966
+## 4          p4  g2m  84.39194  86.27634
+## 5          p5  g2m  96.38517  93.65452
+## 6          p6  g2m  79.15133  86.82601</code></pre>
 <p>Convert tidyr.ex to tidy format</p>
 <pre class="r"><code>tidyr.ex %&gt;% 
     gather(Day, Score, c(day1score, day2score)) %&gt;% 
     mutate(Day=str_extract(Day, &quot;\\d&quot;)) %&gt;% 
     print()</code></pre>
-<pre><code>##    participant info Day    Score
-## 1           p1  g1m   1 80.08484
-## 2           p2  g1m   1 52.49003
-## 3           p3  g1f   1 76.66826
-## 4           p4  g2m   1 62.89208
-## 5           p5  g2m   1 78.34081
-## 6           p6  g2m   1 71.98431
-## 7           p1  g1m   2 88.74511
-## 8           p2  g1m   2 86.00410
-## 9           p3  g1f   2 88.17017
-## 10          p4  g2m   2 95.22918
-## 11          p5  g2m   2 93.43769
-## 12          p6  g2m   2 89.21983</code></pre>
+<pre><code>##    participant info Day     Score
+## 1           p1  g1m   1 107.51567
+## 2           p2  g1m   1  71.85924
+## 3           p3  g1f   1  91.64957
+## 4           p4  g2m   1  84.39194
+## 5           p5  g2m   1  96.38517
+## 6           p6  g2m   1  79.15133
+## 7           p1  g1m   2  91.42354
+## 8           p2  g1m   2  74.37154
+## 9           p3  g1f   2  94.06966
+## 10          p4  g2m   2  86.27634
+## 11          p5  g2m   2  93.65452
+## 12          p6  g2m   2  86.82601</code></pre>
 </div>
 <div id="gather-3" class="section level1">
 <h1>Gather 3</h1>
@@ -220,23 +220,23 @@ airquality.tidy %&gt;%
 )
 messy %&gt;% 
     print()</code></pre>
-<pre><code>##   id       trt    work.T1   home.T1   work.T2   home.T2
-## 1  1 treatment 0.05797427 0.7375767 0.3605038 0.9236228
-## 2  2   control 0.73355533 0.2285490 0.9325931 0.4093765
-## 3  3   control 0.47640009 0.4223765 0.1416768 0.4042964
-## 4  4 treatment 0.74621177 0.1358444 0.4275837 0.4174566</code></pre>
+<pre><code>##   id       trt   work.T1   home.T1    work.T2   home.T2
+## 1  1 treatment 0.1569872 0.7427314 0.02092468 0.1276417
+## 2  2   control 0.6965297 0.1345839 0.52160590 0.4566940
+## 3  3   control 0.6273697 0.3022617 0.33741246 0.9467051
+## 4  4 treatment 0.9641214 0.1905693 0.31043111 0.6569166</code></pre>
 <pre class="r"><code>tidier &lt;- 
     messy %&gt;% 
     gather(key, value, -id, -trt)
 
 tidier %&gt;% 
     head(5)</code></pre>
-<pre><code>##   id       trt     key      value
-## 1  1 treatment work.T1 0.05797427
-## 2  2   control work.T1 0.73355533
-## 3  3   control work.T1 0.47640009
-## 4  4 treatment work.T1 0.74621177
-## 5  1 treatment home.T1 0.73757669</code></pre>
+<pre><code>##   id       trt     key     value
+## 1  1 treatment work.T1 0.1569872
+## 2  2   control work.T1 0.6965297
+## 3  3   control work.T1 0.6273697
+## 4  4 treatment work.T1 0.9641214
+## 5  1 treatment home.T1 0.7427314</code></pre>
 </div>
 <div id="gather-5" class="section level1">
 <h1>gather #5</h1>
@@ -311,25 +311,25 @@ ff.tidy %&gt;%
 <p>Using tidier from above</p>
 <pre class="r"><code>tidier %&gt;% 
     head(5)</code></pre>
-<pre><code>##   id       trt     key      value
-## 1  1 treatment work.T1 0.05797427
-## 2  2   control work.T1 0.73355533
-## 3  3   control work.T1 0.47640009
-## 4  4 treatment work.T1 0.74621177
-## 5  1 treatment home.T1 0.73757669</code></pre>
+<pre><code>##   id       trt     key     value
+## 1  1 treatment work.T1 0.1569872
+## 2  2   control work.T1 0.6965297
+## 3  3   control work.T1 0.6273697
+## 4  4 treatment work.T1 0.9641214
+## 5  1 treatment home.T1 0.7427314</code></pre>
 <pre class="r"><code>tidy &lt;- 
     tidier %&gt;% 
     separate(key, into = c(&quot;loc&quot;, &quot;time&quot;), sep=&quot;\\.&quot;)
 
 tidy %&gt;% 
     head()</code></pre>
-<pre><code>##   id       trt  loc time      value
-## 1  1 treatment work   T1 0.05797427
-## 2  2   control work   T1 0.73355533
-## 3  3   control work   T1 0.47640009
-## 4  4 treatment work   T1 0.74621177
-## 5  1 treatment home   T1 0.73757669
-## 6  2   control home   T1 0.22854902</code></pre>
+<pre><code>##   id       trt  loc time     value
+## 1  1 treatment work   T1 0.1569872
+## 2  2   control work   T1 0.6965297
+## 3  3   control work   T1 0.6273697
+## 4  4 treatment work   T1 0.9641214
+## 5  1 treatment home   T1 0.7427314
+## 6  2   control home   T1 0.1345839</code></pre>
 </div>
 <div id="separate-3" class="section level1">
 <h1>Separate #3</h1>
