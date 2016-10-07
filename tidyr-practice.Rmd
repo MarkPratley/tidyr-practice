@@ -8,22 +8,30 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-## f(x) definitions
+## f(x) definitions and Quick Links
 
 [gather](#Gather)(data, key, value, ..., na.rm = FALSE, convert = FALSE, factor_key = FALSE)
 
+gather() takes multiple columns, and gathers them into key-value pairs: it makes “wide” data longer.
+
 [spread](#Spread)(data, key, value, fill = NA, convert = FALSE, drop = TRUE)
+
+Spread(), takes two columns (a key-value pair) and spreads them in to multiple columns, making “long” data wider.
 
 [separate](#Separate)(data, col, into, sep = "[^[:alnum:]]+", remove = TRUE,
   convert = FALSE, extra = "warn", fill = "warn", ...)
 
+Sometimes two variables are clumped together in one column. separate() allows you to tease them apart.
+
 ## Intro
 
-A brief foray into practicing and remembering the main verbs from [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html) gather, spread and separate.
+I'm always forgetting how to use the main verbs from [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html) so this is a brief foray into practicing and remembering them.
 
-Text taken from [here](https://blog.rstudio.org/2014/07/22/introducing-tidyr/)
+The main verbs are [gather](#Gather), [spread](#Spread) and [separate](#Separate).
 
-Some data to practice on taken from [here](http://garrettgman.github.io/tidying/) or [here](http://www.jvcasillas.com/tidyr_tutorial/)
+Some of the explanatory text is from [here](https://blog.rstudio.org/2014/07/22/introducing-tidyr/)
+
+Some data to practice on is taken from [here](http://garrettgman.github.io/tidying/) and [here](http://www.jvcasillas.com/tidyr_tutorial/)
 
 
 ```{r libs, warning=F, message=F}
